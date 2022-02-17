@@ -1,0 +1,107 @@
+e <- function(points, domainLen, i){
+  h = domainLen / points
+  
+  center = domainLen * i / points
+  left = center - h
+  right = center + h
+  
+  return (function(x){
+    if(x < left || x > right){ return(0);}
+    else if (x <= center) { return((x-left)/h) }
+    else return((right - x)/h)
+  })
+  
+}
+
+
+e_prim <- function(points, domainLen, i){
+  h = domainLen / points
+  
+  center = domainLen * i / points
+  left = center - h
+  right = center + h
+  
+  return (function(x){
+    if(x < left || x > right){ return(0);}
+    else if (x <= center) { return(1/h) }
+    else return(-1/h)
+  })
+}
+
+
+
+B <- function(w_prim, v_prim, w, v, start, end){
+  
+  vw <- function(w_prim, v_prim, v_prim){
+    return(function(x){
+      w_prim(x)*v_prim(x)
+    })
+  }
+  
+  f = vw(w_prim, v_prim)
+  
+  return(
+    w(0)*v(0) - integrate(f, start, end)
+    )
+}
+
+
+
+
+L <- function(v, start, end){
+  return ((-0.1)*integrate(v, start, end) +
+    (-0.2)*integrate(v(x), start, end) +
+    (-1)*integrate(v(x), start, end)+
+    (-5)*v()
+    )
+}
+
+
+
+
+main <- function(){
+  N = 10
+  domainLen = 2
+  points = N + 1
+  
+  M <- matrix(0, nrow=N, ncol=N)
+  
+  for (i in 0:N-1){
+    for (j in 0:N-1){
+      if( abs(i - j) > 1){
+        M[i][j] = 0.0
+        continue
+      }
+      
+      M[i,j] <- B(j-1, i-1)
+      start = max(max(i, j) - 1, 0) * 2 / points
+      end = min(min(i, j) + 1, poinst) * 2 / points
+      
+      M[i][j]= B(
+        e_prim(points, domainLen, j), 
+        e_prim(points, domainLen, i), 
+        e(points, domainLen, j), 
+        e(points, domainLen,i), 
+        start, end)
+        
+      
+    }
+  }
+  print(M)
+  
+}
+
+B(
+  e_prim(11, 2, 1), 
+  e_prim(11, 2, 2), 
+  e(11, 2, 1), 
+  e(11, 2,2), 
+  0, 1)
+
+
+
+
+
+
+
+
